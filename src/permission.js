@@ -18,6 +18,9 @@ router.beforeEach(async(to, from, next) => {
       next('/')
       NProgress.done()
     } else { // 去别的页面
+      if (!store.getters.name) {
+        store.dispatch('user/getUserInfoActions')
+      }
       next()
     }
   } else { // 没有登陆

@@ -24,3 +24,14 @@ export function getUserProfileAPI() {
     method: 'POST'
   })
 }
+
+/**
+ * 用户 - 获取用户头像
+ * @param {*} id 用户-id
+ * @returns Promise
+ */
+export function getUserPhotoAPI(id) {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}

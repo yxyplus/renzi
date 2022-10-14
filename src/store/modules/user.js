@@ -1,9 +1,10 @@
-import { loginAPI } from '@/api/user'
+import { loginAPI, getUserProfileAPI, getUserPhotoAPI } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const getDefaultState = () => {
   return {
     token: getToken(), // 用户token，默认为 ''
+    userInfo: {}, // 用户信息对象
     name: '',
     avatar: ''
   }
@@ -20,6 +21,10 @@ const mutations = {
     state.token = token // vuex里state存一份
     setToken(token) // 给本地也存一份
   },
+  // 设置用户名
+  SER_USER: (state, value) => {
+    state.userInfo = value
+  },
   SET_NAME: (state, name) => {
     state.name = name
   },
@@ -30,11 +35,15 @@ const mutations = {
   REMOVE_TOKEN(state) {
     state.token = ''
     removeToken()
+  },
+  // 删除用户信息
+  REMOVE_USER(state) {
+    state.userInfo = {}
   }
 }
 
 const actions = {
-  // 登录逻辑-封装
+  // 封装-登录逻辑
   async loginActions({ commit }, data) {
     try {
       const res = await loginAPI(data)
@@ -45,6 +54,18 @@ const actions = {
     } catch (err) {
       return Promise.reject(err)
     }
+  },
+  // 封装-获取用户基本信息
+  async getUserInfoActions({ commit }) {
+    const { data: userObj } = await getUserProfileAPI()
+    const { data: photoObj } = await getUserPhotoAPI(userObj.userId)
+    const newObj = { ...userObj, ...photoObj } // 合并一个信息非常全的对象
+    commit('SER_USER', newObj)
+  },
+  // 封装-退出登录逻辑 (被动退出token过期 / 主动退出)
+  logoutActions({ commit }) {
+    commit('REMOVE_TOKEN')
+    commit('REMOVE_USER')
   }
 }
 
