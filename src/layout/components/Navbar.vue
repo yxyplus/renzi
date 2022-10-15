@@ -49,9 +49,27 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
+    // 退出登录->点击事件
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$confirm('这就走了? 不爱我了吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await this.$store.dispatch('user/logoutActions')
+        // this.$route.path -> 路由地址 例如: '/info'
+        // this.$route.fullPath -> 路由地址和参数 例如: '/info?a=10&b=20'
+        this.$router.push(`/login?redirect=${encodeURIComponent(this.$route.fullPath)}`)
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
+        })
+      })
     }
   }
 }

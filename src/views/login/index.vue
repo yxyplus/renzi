@@ -115,7 +115,7 @@ export default {
           try {
             const res = await this.$store.dispatch('user/loginActions', this.loginForm)
             this.$message.success(res.message)
-            this.$router.replace('/')
+            this.$router.replace(this.$route.query.redirect || '/')
           } catch (err) {
             // 错误对象用console.dir 打印
             console.error(err)

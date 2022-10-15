@@ -47,7 +47,7 @@ service.interceptors.response.use(
       // 清空token(vuex和本地都要清除),用户信息，返回到登录页
       // store.commit('user/REMOVE_TOKEN')
       store.dispatch('user/logoutActions')
-      router.replace('/login')
+      router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)
     }
     return Promise.reject(error)
   }
