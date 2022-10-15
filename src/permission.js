@@ -18,10 +18,10 @@ router.beforeEach(async(to, from, next) => {
       next('/')
       NProgress.done()
     } else { // 去别的页面
+      next()
       if (!store.getters.name) {
         store.dispatch('user/getUserInfoActions')
       }
-      next()
     }
   } else { // 没有登陆
     if (whiteList.includes(to.path)) { // 要去的路由地址字符串，是否在白名单数组里出现过，如果出现过就放行

@@ -4,7 +4,28 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 import Layout from '@/layout'
+import approvalsRouter from './modules/approvals'
+import departmentsRouter from './modules/departments'
+import employeesRouter from './modules/employees'
+import permissionRouter from './modules/permission'
+import attendancesRouter from './modules/attendances'
+import salarysRouter from './modules/salarys'
+import settingRouter from './modules/setting'
+import socialRouter from './modules/social'
 
+// 动态路由表，项目中不同的用户可以访问不同的功能
+export const asyncRoutes = [
+  departmentsRouter,
+  settingRouter,
+  employeesRouter,
+  permissionRouter,
+  approvalsRouter,
+  attendancesRouter,
+  salarysRouter,
+  socialRouter
+]
+
+// 静态路由数组
 export const constantRoutes = [
   {
     path: '/login',
@@ -26,17 +47,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
-  },
-
-  {
-    path: '/info',
-    component: Layout,
-    children: [{
-      path: '',
-      component: () => import('@/views/info'),
-      meta: { title: 'info', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
 
@@ -45,7 +56,7 @@ export const constantRoutes = [
 
 const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: [...constantRoutes, ...asyncRoutes]
 })
 
 const router = createRouter()
