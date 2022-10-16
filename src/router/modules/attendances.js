@@ -8,7 +8,7 @@ export default {
       path: '',
       name: 'Attendances',
       component: () => import('@/views/attendances'),
-      meta: { title: '考勤' }
+      meta: { title: '考勤', icon: 'lock' }
     }
   ]
 }

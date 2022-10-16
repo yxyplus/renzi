@@ -2,6 +2,7 @@ import router from './router'
 import NProgress from 'nprogress' // 导入进度条插件
 import 'nprogress/nprogress.css' // 导入进度条样式
 import store from '@/store'
+import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -34,6 +35,7 @@ router.beforeEach(async(to, from, next) => {
 })
 
 // 后置导航守卫
-router.afterEach(() => {
+router.afterEach((to, from) => {
+  document.title = getPageTitle(to.meta.title)
   NProgress.done()
 })

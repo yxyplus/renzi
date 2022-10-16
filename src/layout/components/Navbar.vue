@@ -7,7 +7,7 @@
     />
 
     <div class="app-breadcrumb">
-      xxxxxxxx教育科技股份有限公司
+      xxxxxx教育科技股份有限公司
       <span class="breadBtn">体验版</span>
     </div>
 

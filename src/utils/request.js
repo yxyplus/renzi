@@ -45,7 +45,6 @@ service.interceptors.response.use(
     // 也就是: 左侧有值才会继续往下去点属性 (防止空值去.任意的属性报错)
     if (error?.response?.data?.code === 10002) {
       // 清空token(vuex和本地都要清除),用户信息，返回到登录页
-      // store.commit('user/REMOVE_TOKEN')
       store.dispatch('user/logoutActions')
       router.replace(`/login?redirect=${encodeURIComponent(router.currentRoute.fullPath)}`)
     }
