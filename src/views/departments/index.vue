@@ -27,7 +27,7 @@
                         </span>
                         <!-- 下拉项 -->
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item>添加子部门</el-dropdown-item>
+                          <el-dropdown-item @click.native="add()">添加子部门</el-dropdown-item>
                         </el-dropdown-menu>
                       </el-dropdown>
                     </el-col>
@@ -151,10 +151,17 @@ export default {
       // console.log(data)
     },
     // 正文部分-右侧的添加子部门
+    // (头部->添加子部门:data是undefined)
+    // (列表->添加子部门:data是一行对应的部门对象,treeData里数据)
     add(data) {
-      this.clickDepartId = data.id // 把点击这行的部门id存入
-      this.dialogVisible = true
       this.isEdit = false
+      if (data === undefined) {
+        this.clickDepartId = ''
+      } else {
+        this.clickDepartId = data.id // 把点击这行的部门id存入
+      }
+      // 理解: 子部门pid = 父(点击部门)id
+      this.dialogVisible = true
     },
     // 编辑子部分
     async edit(data) {
