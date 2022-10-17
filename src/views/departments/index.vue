@@ -69,7 +69,7 @@
                             <el-dropdown-menu slot="dropdown">
                               <el-dropdown-item @click.native="add(data)">添加子部门</el-dropdown-item>
                               <el-dropdown-item @click.native="edit(data)">编辑部门</el-dropdown-item>
-                              <el-dropdown-item @click.native="del(data)">删除部门</el-dropdown-item>
+                              <el-dropdown-item v-if="data && !data.children" @click.native="del(data)">删除部门</el-dropdown-item>
                             </el-dropdown-menu>
                           </el-dropdown>
                         </el-col>
@@ -165,6 +165,14 @@ export default {
     },
     // 删除部分
     async del(data) {
+      // 显示删除确认消息对话框
+      const delRes = await this.$confirm('你确定要删除该部门吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+      // 如果返回的结果是 cancel 说明用户取消了删除
+      if (delRes === 'cancel') return this.$message('你取消了删除')
       const res = await delDepartmentAPI(data.id)
       this.$message.success(res.message)
       this.getDepartmentsListFn()
