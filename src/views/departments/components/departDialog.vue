@@ -10,8 +10,9 @@
       :show-close="false"
       :before-close="handleClose"
       @update:visible="val => $emit('update:dialogVisible', false)"
+      @close="dialogCloseFn"
     >
-      <el-form ref="deptForm" label-width="120px">
+      <el-form ref="deptForm" :model="form" label-width="120px">
         <el-form-item label="部门名称">
           <el-input v-model="form.name" style="width:80%" placeholder="1-50个字符" />
         </el-form-item>
@@ -74,6 +75,18 @@ export default {
     confirmFn() {
       this.$emit('addDepartEV', this.form)
       this.$emit('update:dialogVisible', false)
+    },
+    // 关闭后触发的回调函数
+    dialogCloseFn() {
+      // 表单里的值清空
+      this.form = {
+        name: '', // 部门名称
+        code: '', // 部门编码
+        manager: '', // 部门管理者
+        introduce: '' // 部门介绍
+      }
+      // 清空校验提示
+      this.$refs.deptForm.resetFields()
     }
   }
 }
