@@ -2,7 +2,7 @@
   <div>
     <!-- 添加子部门->弹窗dialog -->
     <el-dialog
-      title="新增部门"
+      :title="isEdit ? '编辑部门' : '添加部门'"
       :visible="dialogVisible"
       width="50%"
       :close-on-click-modal="false"
@@ -40,15 +40,60 @@
 <script>
 export default {
   props: {
+    // 页面->控制dialog是否显示
     dialogVisible: {
       type: Boolean
     },
+    // 员工列表
     employeesSimpleList: {
       type: Array,
       default: () => []
+    },
+    // 关键部门信息对象形成的数组
+    originList: {
+      type: Array,
+      default: () => []
+    },
+    // 当前编辑部们id
+    clickDepartId: {
+      type: String,
+      default: ''
+    },
+    // 编辑/新增状态
+    isEdit: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
+    // 校验部门编码是否重复
+    const validCode = (rule, value, callback) => {
+    // 判断是否能否找到对应的部门，如果找到了则返回该对象
+      let codeList = this.originList.map(item => item.code)
+      if (this.isEdit) {
+        const newArr = this.originList.filter(item => item.id !== this.clickDepartId)
+        codeList = newArr.map(item => item.code)
+      }
+      // 如果存在该对象，则说明编码已经存在，抛出错误
+      codeList.includes(value) ? callback(new Error(`部门编码 ${value} 已经存在了`)) : callback()
+    }
+    // 同级部门禁止出现重复部门
+    const validName = (rule, value, callback) => {
+      // 查找同级的分类
+      // 先筛选属于这个pid下属的(parentId就是id)部门对象, 然后映射name名字数组
+      let nameList = this.originList.filter(item => item.pid === this.clickDepartId).map(item => item.name)
+
+      if (this.isEdit) {
+        // 先找到正在编辑ed这个部门对象
+        const obj = this.originList.find(item => item.id === this.clickDepartId)
+        // 找到编辑对象,才能拿到pid
+        const pid = obj.pid
+        // 拿到pid,才能继续从所有部门列表中,找到pid值相同的对象们
+        nameList = this.originList.filter(item => item.pid === pid && item.id !== this.clickDepartId).map(item => item.name)
+      }
+
+      nameList.includes(value) ? callback(new Error(`部门名字 ${value} 已经存在了`)) : callback()
+    }
     return {
       form: {
         name: '', // 部门名称
@@ -59,11 +104,13 @@ export default {
       rules: {
         name: [
           { required: true, message: '部门名称不能为空', trigger: 'blur' },
-          { min: 2, max: 10, message: '部门名称要求2~10个字符', trigger: 'blur' }
+          { min: 2, max: 10, message: '部门名称要求2~10个字符', trigger: 'blur' },
+          { validator: validName, trigger: 'blur' }
         ],
         code: [
           { required: true, message: '部门编码不能为空', trigger: 'blur' },
-          { min: 1, max: 20, message: '部门编码要求1~20个字符', trigger: 'blur' }
+          { min: 1, max: 20, message: '部门编码要求1~20个字符', trigger: 'blur' },
+          { validator: validCode, trigger: 'blur' }
         ],
         manager: [
           { required: true, message: '部门负责人不能为空', trigger: 'change' }

@@ -86,6 +86,9 @@
       <departDialog
         ref="departDialog"
         :dialog-visible.sync="dialogVisible"
+        :origin-list="originList"
+        :click-depart-id="clickDepartId"
+        :is-edit="isEdit"
         :employees-simple-list="employeesSimpleList"
         @addDepartEV="addDepartFn"
       />
@@ -120,11 +123,14 @@ export default {
       },
       // 控制dialog显示/隐藏
       dialogVisible: false,
-      employeesSimpleList: [], // 员工列表(部门负责人)
+      // 员工列表(部门负责人)
+      employeesSimpleList: [],
       // 点击那行部门的id
       clickDepartId: '',
       // 添加/编辑->部门状态(true编辑,false新增)
-      isEdit: false
+      isEdit: false,
+      // 用于校验部门列表扁平数组
+      originList: []
     }
   },
   created() {
@@ -132,9 +138,18 @@ export default {
     this.getEmployeeSimpleListFn()
   },
   methods: {
-    // 获取->组织架构的树形结构数据
+    // 获取->部门列表
     async getDepartmentsListFn() {
       const res = await getDepartmentsListAPI()
+      // 把扁平的数组里对象,映射一份只有关键4对key+value值对象,形成一个新数组,用于传入表单组件内做判断
+      this.originList = res.data.depts.map(item => (
+        {
+          id: item.id,
+          code: item.code,
+          name: item.name,
+          pid: item.pid // 下面使用
+        }
+      ))
       // res.data.depts 第一个参数代表: 数组, 第二个参数'': 代表一级id
       this.treeData = transTree(res.data.depts, '')
     },
@@ -167,6 +182,7 @@ export default {
     async edit(data) {
       this.dialogVisible = true
       this.isEdit = true
+      this.clickDepartId = data.id
       const res = await getDepartDetailAPI(data.id)
       this.$refs.departDialog.form = res.data
     },
