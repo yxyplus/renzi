@@ -36,3 +36,27 @@ export function addDepartmentsAPI(data) {
     // data:{} 里面的参数和值会出现在请求体body中
   })
 }
+
+/**
+ * 组织架构 - 根据部门ID->获取部门详情
+ * @param {*} departId 部门ID
+ * @returns Promise
+ */
+export function getDepartDetailAPI(departId) {
+  return request({
+    url: `/company/department/${departId}`
+  })
+}
+
+/**
+ * 组织架构 - 更新部门详情
+ * @param {*} data 9对key+value的数据对象
+ * @returns Promise
+ */
+export function updateDepartmentsAPI(data) {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}

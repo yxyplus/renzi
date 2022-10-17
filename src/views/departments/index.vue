@@ -84,6 +84,7 @@
       </el-card>
       <!-- 添加子部门->弹窗dialog -->
       <departDialog
+        ref="departDialog"
         :dialog-visible.sync="dialogVisible"
         :employees-simple-list="employeesSimpleList"
         @addDepartEV="addDepartFn"
@@ -96,7 +97,9 @@
 import {
   getDepartmentsListAPI,
   getEmployeeSimpleAPI,
-  addDepartmentsAPI
+  addDepartmentsAPI,
+  getDepartDetailAPI,
+  updateDepartmentsAPI
 } from '@/api/departments'
 import { transTree } from '@/utils'
 import departDialog from './components/departDialog.vue'
@@ -118,7 +121,9 @@ export default {
       dialogVisible: false,
       employeesSimpleList: [], // 员工列表(部门负责人)
       // 点击那行部门的id
-      clickDepartId: ''
+      clickDepartId: '',
+      // 添加/编辑->部门状态(true编辑,false新增)
+      isEdit: false
     }
   },
   created() {
@@ -148,25 +153,38 @@ export default {
     add(data) {
       this.clickDepartId = data.id // 把点击这行的部门id存入
       this.dialogVisible = true
+      this.isEdit = false
     },
     // 编辑子部分
-    edit(data) {
-
+    async edit(data) {
+      this.dialogVisible = true
+      this.isEdit = true
+      const res = await getDepartDetailAPI(data.id)
+      this.$refs.departDialog.form = res.data
     },
     // 删除部分
     del(data) {
 
     },
-    // 添加子部门->确定添加方法
+    // 添加或编辑子部门->确定添加方法
     async addDepartFn(formObj) {
-      formObj.pid = this.clickDepartId
-      try {
-        const res = await addDepartmentsAPI(formObj)
-        this.$message.success(res.message)
-        this.getDepartmentsListFn()
-      } catch (err) {
-        console.error(err)
+      if (this.isEdit) { // 编辑状态
+        try {
+          const res = await updateDepartmentsAPI(formObj)
+          this.$message.success(res.message)
+        } catch (err) {
+          console.error(err)
+        }
+      } else { // 添加状态
+        formObj.pid = this.clickDepartId
+        try {
+          const res = await addDepartmentsAPI(formObj)
+          this.$message.success(res.message)
+        } catch (err) {
+          console.error(err)
+        }
       }
+      this.getDepartmentsListFn()
     }
   }
 }
