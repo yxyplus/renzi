@@ -99,7 +99,8 @@ import {
   getEmployeeSimpleAPI,
   addDepartmentsAPI,
   getDepartDetailAPI,
-  updateDepartmentsAPI
+  updateDepartmentsAPI,
+  delDepartmentAPI
 } from '@/api/departments'
 import { transTree } from '@/utils'
 import departDialog from './components/departDialog.vue'
@@ -163,8 +164,10 @@ export default {
       this.$refs.departDialog.form = res.data
     },
     // 删除部分
-    del(data) {
-
+    async del(data) {
+      const res = await delDepartmentAPI(data.id)
+      this.$message.success(res.message)
+      this.getDepartmentsListFn()
     },
     // 添加或编辑子部门->确定添加方法
     async addDepartFn(formObj) {

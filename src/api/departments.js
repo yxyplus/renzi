@@ -60,3 +60,15 @@ export function updateDepartmentsAPI(data) {
     data
   })
 }
+
+/**
+ * 组织架构 - 根据ID->删除某个部门
+ * @param {*} departId 部门ID
+ * @returns Promise
+ */
+export function delDepartmentAPI(departId) {
+  return request({
+    url: `/company/department/${departId}`,
+    method: 'DELETE'
+  })
+}
