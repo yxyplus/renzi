@@ -11,3 +11,14 @@ export function getRoleListAPI(params) {
     params
   })
 }
+
+/**
+ * 角色设置 - 根据公司ID->获取公司详细信息
+ * @param {*} companyId 公司ID
+ * @returns Promise
+ */
+export function getCompanyInfoAPI(companyId) {
+  return request({
+    url: `/company/${companyId}`
+  })
+}

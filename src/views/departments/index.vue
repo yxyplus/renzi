@@ -12,7 +12,7 @@
                 <!-- 第一列20份 -->
                 <el-col :span="20">
                   <i class="el-icon-s-home" />
-                  <span class="company">xxxxxx教育科技股份有限公司</span>
+                  <span class="company">前端小袁教育科技股份有限公司</span>
                 </el-col>
                 <!-- 第二列4份 -->
                 <el-col :span="4">
