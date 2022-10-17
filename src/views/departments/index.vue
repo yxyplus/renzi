@@ -82,16 +82,30 @@
           </el-tabs>
         </div>
       </el-card>
+      <!-- 添加子部门->弹窗dialog -->
+      <departDialog
+        :dialog-visible.sync="dialogVisible"
+        :employees-simple-list="employeesSimpleList"
+        @addDepartEV="addDepartFn"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { getDepartmentsListAPI } from '@/api/departments'
+import {
+  getDepartmentsListAPI,
+  getEmployeeSimpleAPI,
+  addDepartmentsAPI
+} from '@/api/departments'
 import { transTree } from '@/utils'
+import departDialog from './components/departDialog.vue'
 
 export default {
   name: 'Departments',
+  components: {
+    departDialog
+  },
   data() {
     return {
       activeName: 'first',
@@ -99,18 +113,29 @@ export default {
       treeData: [],
       defaultProps: {
         label: 'name'
-      }
+      },
+      // 控制dialog显示/隐藏
+      dialogVisible: false,
+      employeesSimpleList: [], // 员工列表(部门负责人)
+      // 点击那行部门的id
+      clickDepartId: ''
     }
   },
   created() {
     this.getDepartmentsListFn()
+    this.getEmployeeSimpleListFn()
   },
   methods: {
-    // 获取组织架构的树形结构数据
+    // 获取->组织架构的树形结构数据
     async getDepartmentsListFn() {
       const res = await getDepartmentsListAPI()
       // res.data.depts 第一个参数代表: 数组, 第二个参数'': 代表一级id
       this.treeData = transTree(res.data.depts, '')
+    },
+    // 获取->员工简单列表
+    async getEmployeeSimpleListFn() {
+      const res = await getEmployeeSimpleAPI()
+      this.employeesSimpleList = res.data
     },
     // 选项卡->点击事件
     handleClick(tab, event) {
@@ -121,7 +146,8 @@ export default {
     },
     // 正文部分-右侧的添加子部门
     add(data) {
-
+      this.clickDepartId = data.id // 把点击这行的部门id存入
+      this.dialogVisible = true
     },
     // 编辑子部分
     edit(data) {
@@ -130,6 +156,17 @@ export default {
     // 删除部分
     del(data) {
 
+    },
+    // 添加子部门->确定添加方法
+    async addDepartFn(formObj) {
+      formObj.pid = this.clickDepartId
+      try {
+        const res = await addDepartmentsAPI(formObj)
+        this.$message.success(res.message)
+        this.getDepartmentsListFn()
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 }
