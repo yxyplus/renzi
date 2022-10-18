@@ -59,3 +59,15 @@ export function updateRoleAPI(data) {
     data
   })
 }
+
+/**
+ * 角色设置 - 根据角色ID->删除角色
+ * @param {*} roleId 角色ID
+ * @returns Promise
+ */
+export function deleteRoleAPI(roleId) {
+  return request({
+    url: `/sys/role/${roleId}`,
+    method: 'DELETE'
+  })
+}

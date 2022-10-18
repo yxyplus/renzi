@@ -138,7 +138,8 @@
 import { getRoleListAPI,
   addRoleAPI,
   getRoleDetailAPI,
-  updateRoleAPI } from '@/api/setting'
+  updateRoleAPI,
+  deleteRoleAPI } from '@/api/setting'
 // import { mapGetters } from 'vuex'
 
 export default {
@@ -199,10 +200,16 @@ export default {
     // },
 
     // 每页显示的条数发生改变时触发
-    handleSizeChange() {},
+    handleSizeChange(size) {
+      this.query.pagesize = size
+      this.getRoleListFn()
+    },
 
     // 当前页面发生改变时触发
-    handleCurrentChange() {},
+    handleCurrentChange(page) {
+      this.query.page = page // 修改参数对象
+      this.getRoleListFn() // 再次请求列表query里页码是改变后的
+    },
 
     // 设置角色
     setRoles() {},
@@ -216,7 +223,24 @@ export default {
       this.roleForm = res.data
     },
     // 删除角色
-    delRoles() {},
+    async delRoles(roleObj) {
+      const delRes = await this.$confirm('你确定要删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+
+      if (delRes === 'cancel') return this.$message.info('你取消了删除')
+      const res = await deleteRoleAPI(roleObj.id)
+      this.$message.success(res.message)
+      if (this.rolesList.length === 1) {
+        this.query.page--
+        if (this.query.page === 0) {
+          this.query.page = 1
+        }
+      }
+      this.getRoleListFn()
+    },
 
     // 角色弹框-> 确定按钮
     roleSubmit() {
