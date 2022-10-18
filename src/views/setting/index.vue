@@ -7,7 +7,7 @@
         <el-tabs v-model="activeName">
           <el-tab-pane label="角色管理" name="first" class="tab-pane">
             <!-- 新增角色按钮 -->
-            <el-row style="height:60px">
+            <el-row style="height: 60px">
               <el-button
                 icon="el-icon-plus"
                 size="small"
@@ -22,9 +22,21 @@
               <el-table-column prop="description" label="描述" />
               <el-table-column label="操作">
                 <template slot-scope="scope">
-                  <el-button size="small" type="success" @click="setRoles(scope.row)">分配权限</el-button>
-                  <el-button size="small" type="primary" @click="editRoles(scope.row)">编辑</el-button>
-                  <el-button size="small" type="danger" @click="delRoles(scope.row)">删除</el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="setRoles(scope.row)"
+                  >分配权限</el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="editRoles(scope.row)"
+                  >编辑</el-button>
+                  <el-button
+                    size="small"
+                    type="danger"
+                    @click="delRoles(scope.row)"
+                  >删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -47,18 +59,36 @@
               show-icon
               :closable="false"
             />
-            <el-form label-width="120px" style="margin-top:50px">
+            <el-form label-width="120px" style="margin-top: 50px">
               <el-form-item label="公司名称">
-                <el-input v-model="companyObj.name" disabled style="width:400px" />
+                <el-input
+                  v-model="companyObj.name"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
               <el-form-item label="公司地址">
-                <el-input v-model="companyObj.companyAddress" disabled style="width:400px" />
+                <el-input
+                  v-model="companyObj.companyAddress"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
               <el-form-item label="邮箱">
-                <el-input v-model="companyObj.mailbox" disabled style="width:400px" />
+                <el-input
+                  v-model="companyObj.mailbox"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
               <el-form-item label="备注">
-                <el-input v-model="companyObj.remarks" type="textarea" :rows="3" disabled style="width:400px" />
+                <el-input
+                  v-model="companyObj.remarks"
+                  type="textarea"
+                  :rows="3"
+                  disabled
+                  style="width: 400px"
+                />
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -67,12 +97,17 @@
 
       <!-- 新增角色 - 弹框 -->
       <el-dialog
-        title="新增角色"
+        :title="isEdit? '编辑角色' : '新增角色'"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :visible.sync="showDialog"
       >
-        <el-form ref="roleForm" :model="roleForm" :rules="roleRules" label-width="100px">
+        <el-form
+          ref="roleForm"
+          :model="roleForm"
+          :rules="roleRules"
+          label-width="100px"
+        >
           <el-form-item label="角色名称" prop="name">
             <el-input v-model="roleForm.name" />
           </el-form-item>
@@ -85,7 +120,11 @@
         <el-row slot="footer" type="flex" justify="center">
           <el-col :span="6">
             <el-button size="small" @click="cancleRoles">取消</el-button>
-            <el-button size="small" type="primary" @click="roleSubmit">确定</el-button>
+            <el-button
+              size="small"
+              type="primary"
+              @click="roleSubmit"
+            >确定</el-button>
           </el-col>
         </el-row>
       </el-dialog>
@@ -95,10 +134,12 @@
 
 <script>
 // getCompanyInfoAPI
-import { getRoleListAPI
-
-} from '@/api/setting'
-import { mapGetters } from 'vuex'
+// getUserProfileAPI
+import { getRoleListAPI,
+  addRoleAPI,
+  getRoleDetailAPI,
+  updateRoleAPI } from '@/api/setting'
+// import { mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -131,11 +172,12 @@ export default {
         description: [
           { required: true, message: '角色描述不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      isEdit: false // 是否处于编辑状态
     }
   },
   computed: {
-    ...mapGetters(['companyId'])
+    // ...mapGetters(['companyId'])
   },
   created() {
     this.getRoleListFn()
@@ -149,9 +191,11 @@ export default {
       this.total = res.data.total
     },
     // 获取->公司详情(这个接口可写可不写)
+
     // async getCompanyDetailFn() {
-    //   const res = await getCompanyInfoAPI(this.companyId)
-    //   this.companyObj = res.data
+    //   const { data: { companyId }} = await getUserProfileAPI()
+    //   const res2 = await getCompanyInfoAPI(companyId)
+    //   this.companyObj = res2.data
     // },
 
     // 每页显示的条数发生改变时触发
@@ -163,15 +207,40 @@ export default {
     // 设置角色
     setRoles() {},
 
-    // 编辑角色
-    editRoles() {},
-
+    // 编辑角色->点击事件
+    // roleObj->行角色对象
+    async editRoles(roleObj) {
+      this.isEdit = true
+      this.showDialog = true
+      const res = await getRoleDetailAPI(roleObj.id)
+      this.roleForm = res.data
+    },
     // 删除角色
     delRoles() {},
 
     // 角色弹框-> 确定按钮
     roleSubmit() {
-      this.showDialog = false
+      this.$refs.roleForm.validate(async(valid) => {
+        if (valid) {
+          if (this.isEdit) { // 编辑
+            try {
+              const res = await updateRoleAPI(this.roleForm)
+              this.$message.success(res.message)
+            } catch (err) {
+              console.error(err)
+            }
+          } else { // 新增
+            try {
+              const res = await addRoleAPI(this.roleForm)
+              this.$message.success(res.message)
+            } catch (err) {
+              console.error(err)
+            }
+          }
+          this.getRoleListFn()
+          this.showDialog = false
+        }
+      })
     },
 
     // 角色弹框-> 取消按钮
@@ -180,6 +249,7 @@ export default {
     },
     // 新增角色->按钮点击事件
     addRoleBtnFn() {
+      this.isEdit = false
       this.showDialog = true
     }
   }

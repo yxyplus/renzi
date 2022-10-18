@@ -22,3 +22,40 @@ export function getCompanyInfoAPI(companyId) {
     url: `/company/${companyId}`
   })
 }
+
+/**
+ * 角色设置 - 新增角色
+ * @param {*} data {name:角色名字,description:角色描述}
+ * @returns Promise
+ */
+export function addRoleAPI(data) {
+  return request({
+    url: '/sys/role',
+    method: 'POST',
+    data
+  })
+}
+
+/**
+ * 角色设置 - 根据角色ID->获取角色详情
+ * @param {*} roleId 角色ID值
+ * @returns Promise
+ */
+export function getRoleDetailAPI(roleId) {
+  return request({
+    url: `/sys/role/${roleId}`
+  })
+}
+
+/**
+ * 角色设置 - 根据角色ID->编辑角色
+ * @param {*} data 角色对象
+ * @returns Promise
+ */
+export function updateRoleAPI(data) {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
