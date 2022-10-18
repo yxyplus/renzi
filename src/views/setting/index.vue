@@ -97,10 +97,11 @@
 
       <!-- 新增角色 - 弹框 -->
       <el-dialog
-        :title="isEdit? '编辑角色' : '新增角色'"
+        :title="isEdit ? '编辑角色' : '新增角色'"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :visible.sync="showDialog"
+        @close="closeRoleDialogFn"
       >
         <el-form
           ref="roleForm"
@@ -275,6 +276,11 @@ export default {
     addRoleBtnFn() {
       this.isEdit = false
       this.showDialog = true
+    },
+    // 角色弹框->关闭事件
+    closeRoleDialogFn() {
+      this.$refs.roleForm.resetFields()
+      this.showDialog = false
     }
   }
 }
