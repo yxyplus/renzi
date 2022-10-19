@@ -21,7 +21,7 @@
     <el-form-item label="部门" prop="departmentName">
       <el-input v-model="formData.departmentName" style="width:50%" placeholder="请选择部门" @focus="departmentNameFocus" />
       <div class="tree-box">
-        <el-tree v-show="showTree" :data="treeData" default-expand-all :props="{ label: 'name' }" />
+        <el-tree v-show="showTree" :data="treeData" default-expand-all :props="{ label: 'name' }" @node-click="treeClick" />
       </div>
     </el-form-item>
     <el-form-item label="转正时间" prop="correctionTime">
@@ -81,7 +81,16 @@ export default {
         ]
       },
       hireType: Employees.hireType, // 聘用形式枚举数组+对象
-      showTree: false // 部门树形控件(显示/隐藏)
+      showTree: false, // 部门树形控件(显示/隐藏)
+      clickDepartName: '' // 点击的部门名字
+    }
+  },
+  watch: {
+    // 监测-用户在页面修改后赋予的新值(newVal)
+    'formData.departmentName'(newVal) {
+      if (newVal !== this.clickDepartName) { // 证明用户在输入框修改
+        this.formData.departmentName = this.clickDepartName // 立刻把用户改的覆盖掉
+      }
     }
   },
   methods: {
@@ -100,6 +109,17 @@ export default {
     // 部门输入框->聚焦事件
     departmentNameFocus() {
       this.showTree = true
+    },
+    // 部门树形控件->行点击事件
+    treeClick(data) {
+      // 如果当前部门还有子部门，则不能被选中
+      if (data && data.children) {
+        return
+      }
+      // 把当前选中的节点显示在 input 框中
+      this.formData.departmentName = data.name
+      this.clickDepartName = data.name // 把点击的名字另存一份
+      this.showTree = false
     }
   }
 }
