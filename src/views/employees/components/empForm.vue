@@ -87,7 +87,12 @@ export default {
   },
   watch: {
     // 监测-用户在页面修改后赋予的新值(newVal)
+    // 监测-点击树形控件时，给此对象属性赋值也会触发此函数
+    // 也能监测-resetFields置空的时候也触发了
     'formData.departmentName'(newVal) {
+      if (newVal.length === 0) { // 证明要置空
+        return // 阻止代码往下执行
+      }
       if (newVal !== this.clickDepartName) { // 证明用户在输入框修改
         this.formData.departmentName = this.clickDepartName // 立刻把用户改的覆盖掉
       }

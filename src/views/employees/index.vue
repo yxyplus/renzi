@@ -61,8 +61,10 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :show-close="false"
+        @close="closeFn"
       >
         <EmpForm
+          ref="empForm"
           :show-dialog.sync="showDialog"
           :tree-data="treeData"
           @addEmpEV="addEmpFn"
@@ -150,6 +152,10 @@ export default {
         console.error(err)
       }
       this.getEmployeesListFn()
+    },
+    // 新增员工弹窗->关闭事件
+    closeFn() {
+      this.$refs.empForm.$refs.addForm.resetFields()
     }
   }
 }
