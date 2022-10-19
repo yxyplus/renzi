@@ -11,3 +11,16 @@ export function getEmployeesListAPI(params) {
     params
   })
 }
+
+/**
+ * 员工 - 新增员工
+ * @param {*} data 员工的信息对象(7对key+value但是有些不是必须传递的)
+ * @returns Promise
+ */
+export function addEmployeeAPI(data) {
+  return request({
+    url: '/sys/user',
+    method: 'POST',
+    data
+  })
+}

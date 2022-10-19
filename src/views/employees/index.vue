@@ -62,14 +62,18 @@
         :close-on-press-escape="false"
         :show-close="false"
       >
-        <EmpForm :show-dialog.sync="showDialog" :tree-data="treeData" />
+        <EmpForm
+          :show-dialog.sync="showDialog"
+          :tree-data="treeData"
+          @addEmpEV="addEmpFn"
+        />
       </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { getEmployeesListAPI } from '@/api/employees'
+import { getEmployeesListAPI, addEmployeeAPI } from '@/api/employees'
 import { getDepartmentsListAPI } from '@/api/departments'
 import Employees from '@/api/constant'
 import dayjs from 'dayjs'
@@ -121,7 +125,7 @@ export default {
     },
     // 聘用形式->数据处理
     formatter(row) {
-      const obj = Employees.hireType.find(item => item.id === row.formOfEmployment)
+      const obj = Employees.hireType.find(item => item.id === parseInt(row.formOfEmployment))
       return obj ? obj.value : '未知'
     },
     // 时间格式化
@@ -136,6 +140,16 @@ export default {
     // 新增员工->按钮点击事件->弹框出现
     addEmpShowDialogFn() {
       this.showDialog = true
+    },
+    // 新增员工->逻辑请求
+    async addEmpFn(empObj) {
+      try {
+        const res = await addEmployeeAPI(empObj)
+        this.$message.success(res.message)
+      } catch (err) {
+        console.error(err)
+      }
+      this.getEmployeesListFn()
     }
   }
 }
