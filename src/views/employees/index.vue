@@ -12,7 +12,7 @@
         <template #slot-right>
           <el-button type="danger" size="small">导入excel</el-button>
           <el-button type="success" size="small">导出excel</el-button>
-          <el-button type="primary" size="small">新增员工</el-button>
+          <el-button type="primary" size="small" @click="addEmpShowDialogFn">新增员工</el-button>
         </template>
       </PageTools>
 
@@ -53,6 +53,17 @@
           />
         </el-row>
       </el-card>
+
+      <!-- 新增员工弹框 -->
+      <el-dialog
+        title="新增员工"
+        :visible.sync="showDialog"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
+        <EmpForm :show-dialog.sync="showDialog" />
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -61,9 +72,13 @@
 import { getEmployeesListAPI } from '@/api/employees'
 import Employees from '@/api/constant'
 import dayjs from 'dayjs'
+import EmpForm from './components/empForm'
 
 export default {
   name: 'Employees',
+  components: {
+    EmpForm
+  },
   data() {
     return {
       query: {
@@ -71,7 +86,8 @@ export default {
         size: 10 // 每页条数
       },
       employeesList: [], // 员工列表
-      total: 0 // 数据总条数
+      total: 0, // 数据总条数
+      showDialog: false // 新增员工弹窗
     }
   },
   created() {
@@ -107,6 +123,10 @@ export default {
     workNumberSortFn(a, b) {
       // a和b,是表格,对应行数据(可以遍历到数组里所有对象)
       return parseInt(a.workNumber) - parseInt(b.workNumber)
+    },
+    // 新增员工->按钮点击事件->弹框出现
+    addEmpShowDialogFn() {
+      this.showDialog = true
     }
   }
 }
