@@ -11,13 +11,18 @@
       <el-date-picker v-model="formData.timeOfEntry" style="width:50%" placeholder="请选择入职时间" />
     </el-form-item>
     <el-form-item label="聘用形式" prop="formOfEmployment">
-      <el-select v-model="formData.formOfEmployment" style="width:50%" placeholder="请选择" />
+      <el-select v-model="formData.formOfEmployment" style="width:50%" placeholder="请选择">
+        <el-option v-for="(item,index) in hireType" :key="index" :label="item.value" :value="item.id" />
+      </el-select>
     </el-form-item>
     <el-form-item label="工号" prop="workNumber">
       <el-input v-model="formData.workNumber" style="width:50%" placeholder="请输入工号" />
     </el-form-item>
     <el-form-item label="部门" prop="departmentName">
-      <el-input v-model="formData.departmentName" style="width:50%" placeholder="请选择部门" />
+      <el-input v-model="formData.departmentName" style="width:50%" placeholder="请选择部门" @focus="departmentNameFocus" />
+      <div class="tree-box">
+        <el-tree v-show="showTree" :data="treeData" default-expand-all :props="{ label: 'name' }" />
+      </div>
     </el-form-item>
     <el-form-item label="转正时间" prop="correctionTime">
       <el-date-picker v-model="formData.correctionTime" style="width:50%" placeholder="请选择转正时间" />
@@ -30,8 +35,17 @@
 </template>
 
 <script>
+import Employees from '@/api/constant'
+
 export default {
   name: 'EmpForm',
+  props: {
+    // 部门列表(树形结构)
+    treeData: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
     // 添加表单字段
@@ -65,7 +79,9 @@ export default {
         timeOfEntry: [
           { required: true, message: '请选择入职时间', trigger: 'blur' }
         ]
-      }
+      },
+      hireType: Employees.hireType, // 聘用形式枚举数组+对象
+      showTree: false // 部门树形控件(显示/隐藏)
     }
   },
   methods: {
@@ -80,6 +96,10 @@ export default {
           this.$emit('update:showDialog', false)
         }
       })
+    },
+    // 部门输入框->聚焦事件
+    departmentNameFocus() {
+      this.showTree = true
     }
   }
 }

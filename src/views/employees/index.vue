@@ -62,7 +62,7 @@
         :close-on-press-escape="false"
         :show-close="false"
       >
-        <EmpForm :show-dialog.sync="showDialog" />
+        <EmpForm :show-dialog.sync="showDialog" :tree-data="treeData" />
       </el-dialog>
     </div>
   </div>
@@ -70,9 +70,11 @@
 
 <script>
 import { getEmployeesListAPI } from '@/api/employees'
+import { getDepartmentsListAPI } from '@/api/departments'
 import Employees from '@/api/constant'
 import dayjs from 'dayjs'
 import EmpForm from './components/empForm'
+import { transTree } from '@/utils'
 
 export default {
   name: 'Employees',
@@ -87,17 +89,24 @@ export default {
       },
       employeesList: [], // 员工列表
       total: 0, // 数据总条数
-      showDialog: false // 新增员工弹窗
+      showDialog: false, // 新增员工弹窗
+      treeData: [] // 部门列表(树形结构)
     }
   },
   created() {
     this.getEmployeesListFn()
+    this.getDepartmentsListFn()
   },
   methods: {
     // 获取->员工列表数据
     async getEmployeesListFn() {
       const res = await getEmployeesListAPI(this.query)
       this.employeesList = res.data.rows
+    },
+    // 请求->部门列表
+    async getDepartmentsListFn() {
+      const res = await getDepartmentsListAPI()
+      this.treeData = transTree(res.data.depts, '')
     },
     // 每页显示的条数发生改变时触发
     handleSizeChange(newSize) {
