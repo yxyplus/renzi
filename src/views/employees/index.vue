@@ -21,7 +21,6 @@
         <el-table border :data="employeesList">
           <el-table-column type="index" label="序号" />
           <el-table-column prop="username" label="姓名" />
-          <el-table-column prop="staffPhoto" label="头像" />
           <el-table-column prop="mobile" label="手机号" />
           <el-table-column prop="workNumber" label="工号" sortable :sort-method="workNumberSortFn" />
           <el-table-column prop="formOfEmployment" label="聘用形式">
@@ -32,10 +31,10 @@
           <el-table-column prop="departmentName" label="部门" />
           <el-table-column prop="timeOfEntry" label="入职时间" :formatter="timeFormatter" />
           <el-table-column label="操作" width="280">
-            <template>
+            <template slot-scope="scope">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
-              <el-button type="text" size="small">删除</el-button>
+              <el-button type="text" size="small" @click="delEmp(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -75,7 +74,7 @@
 </template>
 
 <script>
-import { getEmployeesListAPI, addEmployeeAPI } from '@/api/employees'
+import { getEmployeesListAPI, addEmployeeAPI, delEmployeeAPI } from '@/api/employees'
 import { getDepartmentsListAPI } from '@/api/departments'
 import Employees from '@/api/constant'
 import dayjs from 'dayjs'
@@ -108,6 +107,7 @@ export default {
     async getEmployeesListFn() {
       const res = await getEmployeesListAPI(this.query)
       this.employeesList = res.data.rows
+      this.total = res.data.total
     },
     // 请求->部门列表
     async getDepartmentsListFn() {
@@ -156,6 +156,27 @@ export default {
     // 新增员工弹窗->关闭事件
     closeFn() {
       this.$refs.empForm.$refs.addForm.resetFields()
+    },
+    // 根据员工ID->删除员工->点击事件
+    async delEmp(id) {
+      const delRes = await this.$confirm('你确定要删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+
+      if (delRes === 'cancel') return this.$message.info('你取消了删除')
+      const res = await delEmployeeAPI(id)
+      this.$message.success(res.message)
+
+      // 判断是不是最后一条数据
+      if (this.employeesList.length === 1) {
+        this.query.page--
+        if (this.query.page <= 0) {
+          this.query.page = 1
+        }
+      }
+      this.getEmployeesListFn()
     }
   }
 }

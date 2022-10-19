@@ -24,3 +24,15 @@ export function addEmployeeAPI(data) {
     data
   })
 }
+
+/**
+ * 员工 - 根据员工ID->删除员工
+ * @param {*} id 员工ID
+ * @returns Promise
+ */
+export function delEmployeeAPI(id) {
+  return request({
+    url: `/sys/user/${id}`,
+    method: 'DELETE'
+  })
+}
