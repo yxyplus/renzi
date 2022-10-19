@@ -23,10 +23,14 @@
           <el-table-column prop="username" label="姓名" />
           <el-table-column prop="staffPhoto" label="头像" />
           <el-table-column prop="mobile" label="手机号" />
-          <el-table-column prop="workNumber" label="工号" />
-          <el-table-column prop="formOfEmployment" label="聘用形式" />
+          <el-table-column prop="workNumber" label="工号" sortable :sort-method="workNumberSortFn" />
+          <el-table-column prop="formOfEmployment" label="聘用形式">
+            <template v-slot="scope">
+              <span>{{ formatter(scope.row) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="departmentName" label="部门" />
-          <el-table-column prop="timeOfEntry" label="入职时间" />
+          <el-table-column prop="timeOfEntry" label="入职时间" :formatter="timeFormatter" />
           <el-table-column label="操作" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -55,6 +59,8 @@
 
 <script>
 import { getEmployeesListAPI } from '@/api/employees'
+import Employees from '@/api/constant'
+import dayjs from 'dayjs'
 
 export default {
   name: 'Employees',
@@ -87,6 +93,20 @@ export default {
     handleCurrentChange(newPage) {
       this.query.page = newPage
       this.getEmployeesListFn()
+    },
+    // 聘用形式->数据处理
+    formatter(row) {
+      const obj = Employees.hireType.find(item => item.id === row.formOfEmployment)
+      return obj ? obj.value : '未知'
+    },
+    // 时间格式化
+    timeFormatter(row) {
+      return dayjs(row.timeOfEntry).format('YYYY-MM-DD')
+    },
+    // 工号->排序方法
+    workNumberSortFn(a, b) {
+      // a和b,是表格,对应行数据(可以遍历到数组里所有对象)
+      return parseInt(a.workNumber) - parseInt(b.workNumber)
     }
   }
 }
