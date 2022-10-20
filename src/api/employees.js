@@ -36,3 +36,16 @@ export function delEmployeeAPI(id) {
     method: 'DELETE'
   })
 }
+
+/**
+ * 员工 - (批量导入员工)导入excel
+ * @param {*} data [{},{},{}]
+ * @returns Promise
+ */
+export function importEmployeeAPI(data) {
+  return request({
+    url: '/sys/user/batch',
+    method: 'POST',
+    data
+  })
+}

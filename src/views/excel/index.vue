@@ -25,6 +25,8 @@
 <script>
 // 导入上传的组件
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import { importEmployeeAPI } from '@/api/employees'
+import { formatExcelDate } from '@/utils'
 
 export default {
   name: 'UploadExcel',
@@ -57,7 +59,7 @@ export default {
       return false
     },
     // 接受UploadExcel组件内，读取表哥成功的头部数据和表格体的数据
-    handleSuccess({ results, header }) {
+    async handleSuccess({ results, header }) {
       // results里，就是表格的所有数据
       // results是 数组套对象
       // 每个对象对应一行数据
@@ -89,11 +91,19 @@ export default {
         keyArr.forEach(zhKey => {
           const enKey = userRelations[zhKey] // 英文字符串key
           // 5. 为新的对象，添加英文key,和对应的值
-          newObj[enKey] = obj[zhKey]
+          // 只有时间对应的key符合条件,进入把值传给专门处理表格时间的方法
+          if (enKey === 'correctionTime' || enKey === 'timeOfEntry') {
+            newObj[enKey] = formatExcelDate(obj[zhKey])
+          } else {
+            newObj[enKey] = obj[zhKey]
+          }
         })
         return newObj
       })
-      console.log(newArr)
+      // console.log(newArr)
+      const res = await importEmployeeAPI(newArr)
+      this.$message.success(res.message)
+      this.$router.back()
     }
   }
 }
