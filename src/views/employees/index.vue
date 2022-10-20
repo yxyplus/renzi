@@ -11,7 +11,7 @@
         <!-- 自定义右侧内容 -->
         <template #slot-right>
           <el-button type="danger" size="small" @click="uploadBtnFn">导入excel</el-button>
-          <el-button type="success" size="small">导出excel</el-button>
+          <el-button type="success" size="small" @click="exportBtnFn">导出excel</el-button>
           <el-button type="primary" size="small" @click="addEmpShowDialogFn">新增员工</el-button>
         </template>
       </PageTools>
@@ -21,6 +21,7 @@
         <el-table border :data="employeesList">
           <el-table-column type="index" label="序号" />
           <el-table-column prop="username" label="姓名" />
+          <el-table-column prop="staffPhoto" label="头像" />
           <el-table-column prop="mobile" label="手机号" />
           <el-table-column prop="workNumber" label="工号" sortable :sort-method="workNumberSortFn" />
           <el-table-column prop="formOfEmployment" label="聘用形式">
@@ -181,6 +182,43 @@ export default {
     // 导入Excel按钮->点击事件->为了跳转到excel上传页面
     uploadBtnFn() {
       this.$router.push('/excel')
+    },
+    // 导出Excel按钮->点击事件->下载带数据的excel文件(自动)
+    exportBtnFn() {
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['序号', '姓名', '头像', '手机号', '工号', '聘用形式', '部门', '入职时间']
+        const zhAndEnObj = {
+        // 序号可以等遍历的时候直接用索引值, 而不是来自于英文对象里
+          '姓名': 'username',
+          '头像': 'staffPhoto',
+          '手机号': 'mobile',
+          '工号': 'workNumber',
+          '聘用形式': 'formOfEmployment',
+          '部门': 'departmentName',
+          '入职时间': 'timeOfEntry'
+        }
+        const data = this.employeesList.map((enObj, index) => {
+          const newArr = []
+          tHeader.forEach(zhKey => {
+            if (zhKey === '序号') {
+              newArr.push(index + 1)
+            } else {
+              const enKey = zhAndEnObj[zhKey]
+              const value = enObj[enKey]
+              newArr.push(value)
+            }
+          })
+          return newArr
+        })
+        // 导出excel文件的方法
+        excel.export_json_to_excel({
+          header: tHeader, // 表头 必填
+          data, // 具体数据 必填
+          filename: '文件名', // 文件名称
+          autoWidth: true, // 宽度是否自适应
+          bookType: 'xlsx' // 生成的文件类型
+        })
+      })
     }
   }
 }
