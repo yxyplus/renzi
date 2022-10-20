@@ -96,7 +96,8 @@ export default {
       employeesList: [], // 员工列表
       total: 0, // 数据总条数
       showDialog: false, // 新增员工弹窗
-      treeData: [] // 部门列表(树形结构)
+      treeData: [], // 部门列表(树形结构)
+      allEmployeesList: [] // 所有员工列表
     }
   },
   created() {
@@ -109,6 +110,13 @@ export default {
       const res = await getEmployeesListAPI(this.query)
       this.employeesList = res.data.rows
       this.total = res.data.total
+
+      // 第二次请求，才是为了拿到所有的数据
+      const allRes = await getEmployeesListAPI({
+        page: 1,
+        size: res.data.total // 上一个接口返回后台数据的总数量
+      })
+      this.allEmployeesList = allRes.data.rows
     },
     // 请求->部门列表
     async getDepartmentsListFn() {
@@ -197,7 +205,7 @@ export default {
           '部门': 'departmentName',
           '入职时间': 'timeOfEntry'
         }
-        const data = this.employeesList.map((enObj, index) => {
+        const data = this.allEmployeesList.map((enObj, index) => {
           const newArr = []
           tHeader.forEach(zhKey => {
             if (zhKey === '序号') {
@@ -205,7 +213,12 @@ export default {
             } else {
               const enKey = zhAndEnObj[zhKey]
               const value = enObj[enKey]
-              newArr.push(value)
+              if (enKey === 'formOfEmployment') {
+                const obj = Employees.hireType.find(item => item.id === parseInt(value))
+                newArr.push(obj ? obj.value : '未知')
+              } else {
+                newArr.push(value)
+              }
             }
           })
           return newArr
