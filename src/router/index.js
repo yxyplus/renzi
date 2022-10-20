@@ -51,6 +51,17 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/excel',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/excel')
+      }
+    ]
+  },
+
   { path: '*', redirect: '/404', hidden: true }
 ]
 

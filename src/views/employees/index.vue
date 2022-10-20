@@ -10,7 +10,7 @@
 
         <!-- 自定义右侧内容 -->
         <template #slot-right>
-          <el-button type="danger" size="small">导入excel</el-button>
+          <el-button type="danger" size="small" @click="uploadBtnFn">导入excel</el-button>
           <el-button type="success" size="small">导出excel</el-button>
           <el-button type="primary" size="small" @click="addEmpShowDialogFn">新增员工</el-button>
         </template>
@@ -177,6 +177,10 @@ export default {
         }
       }
       this.getEmployeesListFn()
+    },
+    // 导入Excel按钮->点击事件->为了跳转到excel上传页面
+    uploadBtnFn() {
+      this.$router.push('/excel')
     }
   }
 }
