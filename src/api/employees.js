@@ -49,3 +49,16 @@ export function importEmployeeAPI(data) {
     data
   })
 }
+
+/**
+ * 员工 - 根据员工ID,更新员工基本信息
+ * @param {*} data 员工数据对象
+ * @returns Promise
+ */
+export function updateEmployeesAPI(data) {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
