@@ -9,6 +9,13 @@ export default {
       name: 'Employees',
       component: () => import('@/views/employees'),
       meta: { title: '员工', icon: 'people' }
+    },
+    {
+      path: 'detail',
+      name: 'EmployeesDetail',
+      component: () => import('@/views/employees/detail'),
+      meta: { title: '员工详情', icon: 'people' },
+      hidden: true // 防止左侧导航生成
     }
   ]
 }

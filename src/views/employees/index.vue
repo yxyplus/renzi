@@ -32,8 +32,8 @@
           <el-table-column prop="departmentName" label="部门" />
           <el-table-column prop="timeOfEntry" label="入职时间" :formatter="timeFormatter" />
           <el-table-column label="操作" width="280">
-            <template slot-scope="scope">
-              <el-button type="text" size="small">查看</el-button>
+            <template v-slot="{row}">
+              <el-button type="text" size="small" @click="lookDetailFn(row.id)">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
               <el-button type="text" size="small" @click="delEmp(scope.row.id)">删除</el-button>
             </template>
@@ -232,6 +232,10 @@ export default {
           bookType: 'xlsx' // 生成的文件类型
         })
       })
+    },
+    // 员工列表->点击查看详情
+    lookDetailFn(empId) {
+      this.$router.push(`/employees/detail?id=${empId}`)
     }
   }
 }
