@@ -33,7 +33,7 @@
           <el-table-column prop="timeOfEntry" label="入职时间" :formatter="timeFormatter" />
           <el-table-column label="操作" width="280">
             <template v-slot="{row}">
-              <el-button type="text" size="small" @click="lookDetailFn(row.id)">查看</el-button>
+              <el-button type="text" size="small" @click="lookDetailFn(row.id, row.formOfEmployment)">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
               <el-button type="text" size="small" @click="delEmp(scope.row.id)">删除</el-button>
             </template>
@@ -234,8 +234,8 @@ export default {
       })
     },
     // 员工列表->点击查看详情
-    lookDetailFn(empId) {
-      this.$router.push(`/employees/detail?id=${empId}`)
+    lookDetailFn(empId, formOfEmploymentId) {
+      this.$router.push(`/employees/detail?id=${empId}&form=${formOfEmploymentId}`)
     }
   }
 }
