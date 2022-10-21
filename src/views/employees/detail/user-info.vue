@@ -59,7 +59,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
-
+            <UploadImg ref="uploadImg" :staff-photo="userInfo.staffPhoto" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -95,12 +95,14 @@ export default {
     async getUserInfoFn() {
       const res = await getUserPhotoAPI(this.$route.query.id)
       this.userInfo = res.data
+      this.$refs.uploadImg.imageUrl = res.data.staffPhoto
       // 额外加入一个聘用形式
       // this.userInfo.formOfEmployment = parseInt(this.$route.query.form)
       this.$set(this.userInfo, 'formOfEmployment', parseInt(this.$route.query.form))
     },
     // 保存更新按钮->点击事件
     async saveUser() {
+      this.userInfo.staffPhoto = this.$refs.uploadImg.imageUrl
       const res = await updateEmployeesAPI(this.userInfo)
       this.$message.success(res.message)
     }
