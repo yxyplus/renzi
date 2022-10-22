@@ -37,8 +37,8 @@
           <el-table-column label="操作" width="280">
             <template v-slot="{row}">
               <el-button type="text" size="small" @click="lookDetailFn(row.id, row.formOfEmployment)">查看</el-button>
-              <el-button type="text" size="small">分配角色</el-button>
-              <el-button type="text" size="small" @click="delEmp(scope.row.id)">删除</el-button>
+              <el-button type="text" size="small" @click="assignRoleBtnFn">分配角色</el-button>
+              <el-button type="text" size="small" @click="delEmp(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -73,6 +73,12 @@
           @addEmpEV="addEmpFn"
         />
       </el-dialog>
+
+      <!-- 员工-分配角色权限 - 弹窗 -->
+      <el-dialog title="分配角色" :visible.sync="showRoleDialog">
+        <!-- 设置角色组件 -->
+        <assign-role-dialog :show.sync="showRoleDialog" />
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -83,12 +89,14 @@ import { getDepartmentsListAPI } from '@/api/departments'
 import Employees from '@/api/constant'
 import dayjs from 'dayjs'
 import EmpForm from './components/empForm'
+import AssignRoleDialog from './components/assignRoleDialog.vue'
 import { transTree } from '@/utils'
 
 export default {
   name: 'Employees',
   components: {
-    EmpForm
+    EmpForm,
+    AssignRoleDialog
   },
   data() {
     return {
@@ -100,7 +108,8 @@ export default {
       total: 0, // 数据总条数
       showDialog: false, // 新增员工弹窗
       treeData: [], // 部门列表(树形结构)
-      allEmployeesList: [] // 所有员工列表
+      allEmployeesList: [], // 所有员工列表
+      showRoleDialog: false // 分配角色的弹窗
     }
   },
   created() {
@@ -239,6 +248,10 @@ export default {
     // 员工列表->点击查看详情
     lookDetailFn(empId, formOfEmploymentId) {
       this.$router.push(`/employees/detail?id=${empId}&form=${formOfEmploymentId}`)
+    },
+    // 分配角色按钮->点击事件->分配角色弹窗出现
+    assignRoleBtnFn() {
+      this.showRoleDialog = true
     }
   }
 }
