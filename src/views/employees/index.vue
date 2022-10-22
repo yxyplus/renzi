@@ -75,7 +75,13 @@
       </el-dialog>
 
       <!-- 员工-分配角色权限 - 弹窗 -->
-      <el-dialog title="分配角色" :visible.sync="showRoleDialog">
+      <el-dialog
+        title="分配角色"
+        :visible.sync="showRoleDialog"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
         <!-- 设置角色组件 -->
         <assign-role-dialog
           ref="assignRoleDialog"
