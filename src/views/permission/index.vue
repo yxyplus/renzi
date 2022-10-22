@@ -12,7 +12,11 @@
 
       <!-- 表格 -->
       <el-card class="card">
-        <el-table border :data="allPermissionList">
+        <el-table
+          border
+          :data="allPermissionList"
+          row-key="id"
+        >
           <el-table-column label="名称" prop="name" />
           <el-table-column label="标识" prop="code" />
           <el-table-column label="描述" prop="description" />
@@ -31,6 +35,7 @@
 
 <script>
 import { getPermissionListAPI } from '@/api/permission'
+import { transTree } from '@/utils'
 
 export default {
   data() {
@@ -45,7 +50,8 @@ export default {
   methods: {
     async getPermissionListFn() {
       const res = await getPermissionListAPI()
-      this.allPermissionList = res.data
+      // transTree内部在查找的时候，参数2，要传递父级id(递归找子对象)
+      this.allPermissionList = transTree(res.data, '0')
     }
   }
 }
