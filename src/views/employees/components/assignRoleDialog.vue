@@ -1,6 +1,11 @@
 <template>
   <div>
     <!-- 渲染角色列表 -->
+    <el-checkbox-group v-model="roleIdsList">
+      <el-checkbox v-for="item in allRoleList" :key="item.id" :label="item.id">
+        <span>{{ item.name }}</span>
+      </el-checkbox>
+    </el-checkbox-group>
 
     <el-row class="footer" type="flex" justify="center">
       <el-col :span="6">
@@ -15,14 +20,16 @@
 export default {
   name: 'AssignRole',
   props: {
-    // 用户的id 用来查询当前用户的角色信息
-    userId: {
-      type: String,
-      default: null
+    // 所有角色列表
+    allRoleList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
-    return {}
+    return {
+      roleIdsList: [] // 收集选中的角色ID
+    }
   },
   methods: {
     // 确定弹框

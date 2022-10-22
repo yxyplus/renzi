@@ -77,7 +77,10 @@
       <!-- 员工-分配角色权限 - 弹窗 -->
       <el-dialog title="分配角色" :visible.sync="showRoleDialog">
         <!-- 设置角色组件 -->
-        <assign-role-dialog :show.sync="showRoleDialog" />
+        <assign-role-dialog
+          :show.sync="showRoleDialog"
+          :all-role-list="allRoleList"
+        />
       </el-dialog>
     </div>
   </div>
@@ -85,6 +88,7 @@
 
 <script>
 import { getEmployeesListAPI, addEmployeeAPI, delEmployeeAPI } from '@/api/employees'
+import { getRoleListAPI } from '@/api/setting'
 import { getDepartmentsListAPI } from '@/api/departments'
 import Employees from '@/api/constant'
 import dayjs from 'dayjs'
@@ -109,12 +113,14 @@ export default {
       showDialog: false, // 新增员工弹窗
       treeData: [], // 部门列表(树形结构)
       allEmployeesList: [], // 所有员工列表
-      showRoleDialog: false // 分配角色的弹窗
+      showRoleDialog: false, // 分配角色的弹窗
+      allRoleList: [] // 所有的角色列表
     }
   },
   created() {
     this.getEmployeesListFn()
     this.getDepartmentsListFn()
+    this.getRoleListFn()
   },
   methods: {
     // 获取->员工列表数据
@@ -134,6 +140,18 @@ export default {
     async getDepartmentsListFn() {
       const res = await getDepartmentsListAPI()
       this.treeData = transTree(res.data.depts, '')
+    },
+    // 请求-角色列表(所有)
+    async getRoleListFn() {
+      const res = await getRoleListAPI({
+        page: 1,
+        pagesize: 10
+      })
+      const allRes = await getRoleListAPI({
+        page: 1,
+        pagesize: res.data.total
+      })
+      this.allRoleList = allRes.data.rows
     },
     // 每页显示的条数发生改变时触发
     handleSizeChange(newSize) {
