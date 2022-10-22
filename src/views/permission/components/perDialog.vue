@@ -43,12 +43,28 @@ export default {
     isEdit: {
       type: Boolean,
       default: false
+    },
+    // 所有权限点列表(扁平)
+    permissionList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
+    const validName = (rule, value, callback) => {
+      // formData.pid (新增的对象pid), 通过它找到同级权限点对象
+      const nameList = this.permissionList.filter(item => item.pid === this.formData.pid)
+        .map(item => item.name)
+
+      nameList.includes(value) ? callback(new Error(`权限点 ${value} 名字已经存在`)) : callback()
+    }
+    const validCode = (rule, value, callback) => {
+      const codeList = this.permissionList.map(item => item.code)
+      codeList.includes(value) ? callback(new Error(`权限标识 ${value} 名字已经存在`)) : callback()
+    }
     return {
       showDialog: false, // 控制dialog显示/隐藏
-      permissionList: [], // 权限管理列表数据
+      // permissionList: [], // 权限管理列表数据
       formData: {
         name: '', // 名称
         code: '', // 权限标识
@@ -58,8 +74,14 @@ export default {
         type: '' // 类型吖
       },
       rules: {
-        name: [{ required: true, message: '权限名称不能为空', trigger: 'blur' }],
-        code: [{ required: true, message: '权限标识不能为空', trigger: 'blur' }]
+        name: [
+          { required: true, message: '权限名称不能为空', trigger: 'blur' },
+          { validator: validName, trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '权限标识不能为空', trigger: 'blur' },
+          { validator: validCode, trigger: 'blur' }
+        ]
       }
     }
   },

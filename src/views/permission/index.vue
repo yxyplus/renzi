@@ -34,6 +34,7 @@
       <perDialog
         ref="perDialog"
         :is-edit="isEdit"
+        :permission-list="permissionList"
         @addPerEV="addPerFn"
       />
     </div>
@@ -56,7 +57,8 @@ export default {
   },
   data() {
     return {
-      allPermissionList: [], // 所有权限点对象列表数组
+      allPermissionList: [], // 所有权限点对象列表数组(树形的)
+      permissionList: [], // 所有权限点对象列表数组(扁平的)
       isEdit: false
     }
   },
@@ -69,6 +71,7 @@ export default {
     async getPermissionListFn() {
       const res = await getPermissionListAPI()
       // transTree内部在查找的时候，参数2，要传递父级id(递归找子对象)
+      this.permissionList = res.data
       this.allPermissionList = transTree(res.data, '0')
     },
     // 点击添加->权限点弹窗出现
