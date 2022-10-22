@@ -21,7 +21,10 @@
         <el-table border :data="employeesList">
           <el-table-column type="index" label="序号" />
           <el-table-column prop="username" label="姓名" />
-          <el-table-column prop="staffPhoto" label="头像" />
+          <el-table-column prop="staffPhoto" label="头像">
+            <template v-slot="{row}">
+              <ImageHolder class="staffPhoto" :src="row.staffPhoto" />
+            </template></el-table-column>
           <el-table-column prop="mobile" label="手机号" />
           <el-table-column prop="workNumber" label="工号" sortable :sort-method="workNumberSortFn" />
           <el-table-column prop="formOfEmployment" label="聘用形式">
@@ -241,4 +244,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.staffPhoto {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+</style>
