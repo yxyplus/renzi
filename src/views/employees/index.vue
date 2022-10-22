@@ -37,7 +37,7 @@
           <el-table-column label="操作" width="280">
             <template v-slot="{row}">
               <el-button type="text" size="small" @click="lookDetailFn(row.id, row.formOfEmployment)">查看</el-button>
-              <el-button type="text" size="small" @click="assignRoleBtnFn">分配角色</el-button>
+              <el-button type="text" size="small" @click="assignRoleBtnFn(row)">分配角色</el-button>
               <el-button type="text" size="small" @click="delEmp(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -78,6 +78,7 @@
       <el-dialog title="分配角色" :visible.sync="showRoleDialog">
         <!-- 设置角色组件 -->
         <assign-role-dialog
+          ref="assignRoleDialog"
           :show.sync="showRoleDialog"
           :all-role-list="allRoleList"
         />
@@ -88,6 +89,7 @@
 
 <script>
 import { getEmployeesListAPI, addEmployeeAPI, delEmployeeAPI } from '@/api/employees'
+import { getUserPhotoAPI } from '@/api/user'
 import { getRoleListAPI } from '@/api/setting'
 import { getDepartmentsListAPI } from '@/api/departments'
 import Employees from '@/api/constant'
@@ -268,8 +270,18 @@ export default {
       this.$router.push(`/employees/detail?id=${empId}&form=${formOfEmploymentId}`)
     },
     // 分配角色按钮->点击事件->分配角色弹窗出现
-    assignRoleBtnFn() {
+    async assignRoleBtnFn(empObj) {
+      // 通过员工ID,换回来员工详细信息(roleIds数组)
+      const res = await getUserPhotoAPI(empObj.id)
       this.showRoleDialog = true
+
+      // 知识点: Vue更新DOM的动作是异步的
+      // 上一句话同步代码, 会把所有同步代码执行完毕
+      // 才会更新真实DOM(弹窗内组件才出现)
+      // 假如立刻获取弹窗内容组件可能获取不到
+      this.$nextTick(() => {
+        this.$refs.assignRoleDialog.roleIdsList = res.data.roleIds
+      })
     }
   }
 }

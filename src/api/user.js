@@ -26,7 +26,7 @@ export function getUserProfileAPI() {
 }
 
 /**
- * 用户 - 获取用户头像
+ * 用户 - 获取员工基本信息->获取用户头像
  * @param {*} id 用户-id
  * @returns Promise
  */
