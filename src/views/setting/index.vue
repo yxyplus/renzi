@@ -129,6 +129,21 @@
           </el-col>
         </el-row>
       </el-dialog>
+
+      <!-- 给角色分配权限点弹框 -->
+      <el-dialog
+        title="分配权限"
+        :visible.sync="dialogVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        :show-close="false"
+      >
+        <!-- v-model也是语法糖
+          运行时会转换成以下写法
+          :value="dialogVisible"
+          @input="val => dialogVisible = val" -->
+        <AssignPermission v-model="dialogVisible" />
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -142,8 +157,12 @@ import { getRoleListAPI,
   updateRoleAPI,
   deleteRoleAPI } from '@/api/setting'
 // import { mapGetters } from 'vuex'
+import AssignPermission from './assignPermission.vue'
 
 export default {
+  components: {
+    AssignPermission
+  },
   data() {
     return {
       activeName: 'first',
@@ -175,7 +194,8 @@ export default {
           { required: true, message: '角色描述不能为空', trigger: 'blur' }
         ]
       },
-      isEdit: false // 是否处于编辑状态
+      isEdit: false, // 是否处于编辑状态
+      dialogVisible: false // 显示/隐藏->分配权限的弹框
     }
   },
   computed: {
@@ -213,7 +233,10 @@ export default {
     },
 
     // 设置角色
-    setRoles() {},
+    // roleObj 角色对象
+    setRoles(roleObj) {
+      this.dialogVisible = true
+    },
 
     // 编辑角色->点击事件
     // roleObj->行角色对象
