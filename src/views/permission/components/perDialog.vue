@@ -66,7 +66,9 @@ export default {
   methods: {
     // dialog关闭事件
     btnCancel() {
-
+      this.$refs.perForm.resetFields()
+      // this.formData = this.$options.data().formData
+      this.formData = {}
     },
     // 确定按钮->点击事件
     enterFn() {

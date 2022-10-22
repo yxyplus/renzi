@@ -44,7 +44,8 @@
 import {
   getPermissionListAPI,
   addPermissionAPI,
-  getPermissionDetailAPI
+  getPermissionDetailAPI,
+  updatePermissionAPI
 } from '@/api/permission'
 import { transTree } from '@/utils'
 import perDialog from './components/perDialog.vue'
@@ -79,10 +80,16 @@ export default {
       this.$refs.perDialog.formData.type = type
       this.$refs.perDialog.formData.pid = pid // 表单组件弹框里组件对象, 添加2个值 (其他4个靠表单里用户输入)
     },
-    // 执行添加权限点逻辑->调接口
+    // 执行添加/编辑 权限点逻辑->调接口
     async addPerFn(formData) {
-      const res = await addPermissionAPI(formData)
-      this.$message.success(res.message)
+      if (this.isEdit) { // 编辑
+        const res = await updatePermissionAPI(formData)
+        this.$message.success(res.message)
+      } else { // 新增
+        const res = await addPermissionAPI(formData)
+        this.$message.success(res.message)
+      }
+
       this.getPermissionListFn()
     },
     // 编辑权限点->点击事件
