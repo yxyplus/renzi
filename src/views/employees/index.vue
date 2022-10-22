@@ -81,6 +81,7 @@
           ref="assignRoleDialog"
           :show.sync="showRoleDialog"
           :all-role-list="allRoleList"
+          @addRoleEV="addRoleFn"
         />
       </el-dialog>
     </div>
@@ -88,7 +89,7 @@
 </template>
 
 <script>
-import { getEmployeesListAPI, addEmployeeAPI, delEmployeeAPI } from '@/api/employees'
+import { getEmployeesListAPI, addEmployeeAPI, delEmployeeAPI, saveEmployeesRoleAPI } from '@/api/employees'
 import { getUserPhotoAPI } from '@/api/user'
 import { getRoleListAPI } from '@/api/setting'
 import { getDepartmentsListAPI } from '@/api/departments'
@@ -116,9 +117,17 @@ export default {
       treeData: [], // 部门列表(树形结构)
       allEmployeesList: [], // 所有员工列表
       showRoleDialog: false, // 分配角色的弹窗
-      allRoleList: [] // 所有的角色列表
+      allRoleList: [], // 所有的角色列表
+      clickEmpId: '' // 点击分配角色时,选中的员工id
+      // roleIds: []
     }
   },
+  // watch: {
+  //   // 侦听
+  //   roleIds() {
+  //     this.roleIdsList = this.roleIds
+  //   }
+  // },
   created() {
     this.getEmployeesListFn()
     this.getDepartmentsListFn()
@@ -273,6 +282,7 @@ export default {
     async assignRoleBtnFn(empObj) {
       // 通过员工ID,换回来员工详细信息(roleIds数组)
       const res = await getUserPhotoAPI(empObj.id)
+      this.clickEmpId = empObj.id
       this.showRoleDialog = true
 
       // 知识点: Vue更新DOM的动作是异步的
@@ -282,6 +292,16 @@ export default {
       this.$nextTick(() => {
         this.$refs.assignRoleDialog.roleIdsList = res.data.roleIds
       })
+    },
+    // 调用接口->保存员工的最新角色ID
+    async addRoleFn(roleIdsList) {
+      const res = await saveEmployeesRoleAPI({
+        id: this.clickEmpId,
+        roleIds: roleIdsList
+      })
+      this.$message.success(res.message)
+      this.showRoleDialog = false
+      this.getEmployeesListFn()
     }
   }
 }

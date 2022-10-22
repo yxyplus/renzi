@@ -34,6 +34,7 @@ export default {
   methods: {
     // 确定弹框
     enterFn() {
+      this.$emit('addRoleEV', this.roleIdsList)
       this.$emit('update:show', false)
     },
     // 取消弹框

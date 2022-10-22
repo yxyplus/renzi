@@ -62,3 +62,16 @@ export function updateEmployeesAPI(data) {
     data
   })
 }
+
+/**
+ * 员工 - 给员工->分配保存角色
+ * @param {*} data { id:当前用户id, roleIds:选中的角色id组成的数组 }
+ * @returns Promise
+ */
+export function saveEmployeesRoleAPI(data) {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'PUT',
+    data
+  })
+}
