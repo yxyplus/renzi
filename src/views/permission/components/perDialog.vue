@@ -53,13 +53,23 @@ export default {
   data() {
     const validName = (rule, value, callback) => {
       // formData.pid (新增的对象pid), 通过它找到同级权限点对象
-      const nameList = this.permissionList.filter(item => item.pid === this.formData.pid)
+      let nameList = this.permissionList.filter(item => item.pid === this.formData.pid)
         .map(item => item.name)
+
+      if (this.isEdit) {
+        nameList = this.permissionList.filter(item => item.pid === this.formData.pid && item.id !== this.formData.id)
+          .map(item => item.name)
+      }
 
       nameList.includes(value) ? callback(new Error(`权限点 ${value} 名字已经存在`)) : callback()
     }
     const validCode = (rule, value, callback) => {
-      const codeList = this.permissionList.map(item => item.code)
+      let codeList = this.permissionList.map(item => item.code)
+
+      if (this.isEdit) {
+        codeList = this.permissionList.filter(item => item.id !== this.formData.id).map(item => item.code)
+      }
+
       codeList.includes(value) ? callback(new Error(`权限标识 ${value} 名字已经存在`)) : callback()
     }
     return {

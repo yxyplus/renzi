@@ -24,7 +24,7 @@
             <template v-slot="{row}">
               <el-button v-if="row.type === 1" type="text" @click="addPermissionFn(2,row.id)">添加</el-button>
               <el-button type="text" @click="editPermissionFn(row.id)">编辑</el-button>
-              <el-button type="text">删除</el-button>
+              <el-button type="text" @click="delPermissionFn(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -46,7 +46,8 @@ import {
   getPermissionListAPI,
   addPermissionAPI,
   getPermissionDetailAPI,
-  updatePermissionAPI
+  updatePermissionAPI,
+  delPermissionAPI
 } from '@/api/permission'
 import { transTree } from '@/utils'
 import perDialog from './components/perDialog.vue'
@@ -101,6 +102,19 @@ export default {
       this.$refs.perDialog.showDialog = true
       const res = await getPermissionDetailAPI(perId)
       this.$refs.perDialog.formData = res.data
+    },
+    // 删除权限点->点击事件
+    async delPermissionFn(perId) {
+      const confirmRes = await this.$confirm('你确定要删除该权限吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+
+      if (confirmRes === 'cancel') return this.$message.info('您取消了删除')
+      const res = await delPermissionAPI(perId)
+      this.$message.success(res.message)
+      this.getPermissionListFn()
     }
   }
 }
