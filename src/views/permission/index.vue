@@ -23,7 +23,7 @@
           <el-table-column label="操作">
             <template v-slot="{row}">
               <el-button v-if="row.type === 1" type="text" @click="addPermissionFn(2,row.id)">添加</el-button>
-              <el-button type="text">编辑</el-button>
+              <el-button type="text" @click="editPermissionFn(row.id)">编辑</el-button>
               <el-button type="text">删除</el-button>
             </template>
           </el-table-column>
@@ -31,13 +31,21 @@
       </el-card>
 
       <!-- 添加权限点的弹窗 -->
-      <perDialog ref="perDialog" @addPerEV="addPerFn" />
+      <perDialog
+        ref="perDialog"
+        :is-edit="isEdit"
+        @addPerEV="addPerFn"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { getPermissionListAPI, addPermissionAPI } from '@/api/permission'
+import {
+  getPermissionListAPI,
+  addPermissionAPI,
+  getPermissionDetailAPI
+} from '@/api/permission'
 import { transTree } from '@/utils'
 import perDialog from './components/perDialog.vue'
 
@@ -47,7 +55,8 @@ export default {
   },
   data() {
     return {
-      allPermissionList: [] // 所有权限点对象列表数组
+      allPermissionList: [], // 所有权限点对象列表数组
+      isEdit: false
     }
   },
   created() {
@@ -65,6 +74,7 @@ export default {
     // type: 右上角按钮传下来1, 页面权限点右侧添加, 传下来2 (type值作为新对象的type使用)
     // pid: 右上角按钮传下来'0', 页面权限点右侧添加点击, 传下来行id值 (pid也是要给新对象pid使用)
     addPermissionFn(type, pid) {
+      this.isEdit = false
       this.$refs.perDialog.showDialog = true
       this.$refs.perDialog.formData.type = type
       this.$refs.perDialog.formData.pid = pid // 表单组件弹框里组件对象, 添加2个值 (其他4个靠表单里用户输入)
@@ -74,6 +84,13 @@ export default {
       const res = await addPermissionAPI(formData)
       this.$message.success(res.message)
       this.getPermissionListFn()
+    },
+    // 编辑权限点->点击事件
+    async editPermissionFn(perId) {
+      this.isEdit = true
+      this.$refs.perDialog.showDialog = true
+      const res = await getPermissionDetailAPI(perId)
+      this.$refs.perDialog.formData = res.data
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <!-- 放置一个弹层 用来编辑新增节点 -->
   <el-dialog
-    title="新增权限点"
+    :title="isEdit ? '编辑权限' : '添加权限'"
     :visible.sync="showDialog"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -38,6 +38,13 @@
 
 <script>
 export default {
+  props: {
+    // 添加/编辑的状态
+    isEdit: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       showDialog: false, // 控制dialog显示/隐藏
