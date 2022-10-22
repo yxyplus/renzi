@@ -290,7 +290,7 @@ export default {
       // 才会更新真实DOM(弹窗内组件才出现)
       // 假如立刻获取弹窗内容组件可能获取不到
       this.$nextTick(() => {
-        this.$refs.assignRoleDialog.roleIdsList = res.data.roleIds
+        this.$refs.assignRoleDialog.roleIdsList = res.data.roleIds || []
       })
     },
     // 调用接口->保存员工的最新角色ID
