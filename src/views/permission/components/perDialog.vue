@@ -63,7 +63,13 @@ export default {
     },
     // 确定按钮->点击事件
     enterFn() {
-      this.showDialog = false
+      this.$refs.perForm.validate(valid => {
+        if (valid) {
+          // 防止一会儿做清空, 把formData对象引用的值清除了, axios发送的时候为空就不好了
+          this.$emit('addPerEV', { ...this.formData })
+          this.showDialog = false
+        }
+      })
     },
     // 取消按钮->点击事件
     cancelFn() {
