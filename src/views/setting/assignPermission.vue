@@ -4,7 +4,15 @@
     <!-- tree组件内, 默认会使用数组里对象的label属性的值, 作为每行节点内容渲染
         但是我们permissionList里对象name才是名字, 所以用props配合label, 告诉
         tree组件内, 使用对象的name属性的值, 作为每行节点渲染内容 -->
-    <el-tree :data="permissionList" :props="{label:'name'}" />
+    <el-tree
+      ref="theTree"
+      :data="permissionList"
+      :props="{label:'name'}"
+      show-checkbox
+      default-expand-all
+      check-strictly
+      node-key="id"
+    />
 
     <el-row class="footer" type="flex" justify="center">
       <el-col :span="6">
@@ -23,6 +31,11 @@ export default {
     permissionList: {
       type: Array,
       default: _ => []
+    },
+    // 此角色现有权限点id值数组
+    permIds: {
+      type: Array,
+      default: () => []
     }
     // roleId: {
     //   type: [Number, String],
@@ -32,8 +45,10 @@ export default {
   data() {
     return {}
   },
-  created() {
-    console.log(this.roleId)
+  watch: {
+    permIds() {
+      this.$refs.theTree.setCheckedKeys(this.permIds)
+    }
   },
   methods: {
     // 取消按钮

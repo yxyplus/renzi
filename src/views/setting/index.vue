@@ -145,6 +145,7 @@
         <AssignPermission
           v-model="dialogVisible"
           :permission-list="permissionList"
+          :perm-ids="permIds"
         />
       </el-dialog>
     </div>
@@ -201,7 +202,8 @@ export default {
       },
       isEdit: false, // 是否处于编辑状态
       dialogVisible: false, // 显示/隐藏->分配权限的弹框
-      permissionList: [] // 所有权限点数据
+      permissionList: [], // 所有权限点数据
+      permIds: [] // 此角色现有的权限点数据(权限点id字符串值)
     }
   },
   computed: {
@@ -247,8 +249,10 @@ export default {
 
     // 设置角色
     // roleObj 角色对象
-    setRoles(roleObj) {
+    async setRoles(roleObj) {
+      const res = await getRoleDetailAPI(roleObj.id)
       this.dialogVisible = true
+      this.permIds = res.data.permIds
     },
 
     // 编辑角色->点击事件
