@@ -147,6 +147,7 @@
           v-model="dialogVisible"
           :permission-list="permissionList"
           :perm-ids="permIds"
+          @addPerEV="addPermissionFn"
         />
       </el-dialog>
     </div>
@@ -160,7 +161,8 @@ import { getRoleListAPI,
   addRoleAPI,
   getRoleDetailAPI,
   updateRoleAPI,
-  deleteRoleAPI } from '@/api/setting'
+  deleteRoleAPI,
+  assignPermAPI } from '@/api/setting'
 import { getPermissionListAPI } from '@/api/permission'
 // import { mapGetters } from 'vuex'
 import AssignPermission from './assignPermission.vue'
@@ -204,7 +206,8 @@ export default {
       isEdit: false, // 是否处于编辑状态
       dialogVisible: false, // 显示/隐藏->分配权限的弹框
       permissionList: [], // 所有权限点数据
-      permIds: [] // 此角色现有的权限点数据(权限点id字符串值)
+      permIds: [], // 此角色现有的权限点数据(权限点id字符串值)
+      clickRoleId: '' // 分配权限时, 点击那行角色id
     }
   },
   computed: {
@@ -248,9 +251,10 @@ export default {
       this.getRoleListFn() // 再次请求列表query里页码是改变后的
     },
 
-    // 设置角色
+    // 设置角色(分配权限)
     // roleObj 角色对象
     async setRoles(roleObj) {
+      this.clickRoleId = roleObj.id
       this.dialogVisible = true
       const res = await getRoleDetailAPI(roleObj.id)
       this.permIds = res.data.permIds
@@ -326,6 +330,15 @@ export default {
     // 分配权限点->弹窗关闭事件方法
     perDialogCloseFn() {
       this.permIds = []
+    },
+    // 确定给角色分配权限
+    async addPermissionFn(permIdsList) {
+      const res = await assignPermAPI({
+        id: this.clickRoleId,
+        permIds: permIdsList
+      })
+      this.$message.success(res.message)
+      this.getRoleListFn()
     }
   }
 }

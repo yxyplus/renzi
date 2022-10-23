@@ -71,3 +71,16 @@ export function deleteRoleAPI(roleId) {
     method: 'DELETE'
   })
 }
+
+/**
+ * 角色设置 - 给角色分配权限并保存
+ * @param {*} data {id:角色id, permIds:[] 所有选中的节点的id组成的数组}
+ * @returns Promise
+ */
+export function assignPermAPI(data) {
+  return request({
+    url: '/sys/role/assignPrem',
+    method: 'PUT',
+    data
+  })
+}

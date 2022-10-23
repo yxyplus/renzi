@@ -58,6 +58,8 @@ export default {
 
     // 设置权限按钮
     setRolesBtn() {
+      // 获取现在已选的key对应值形成的数组(权限点id组成的数组)
+      this.$emit('addPerEV', this.$refs.theTree.getCheckedKeys())
       this.$emit('input', false)
     }
   }
