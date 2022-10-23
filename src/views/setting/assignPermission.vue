@@ -1,6 +1,10 @@
 <template>
   <div>
     <div>分配权限功能</div>
+    <!-- tree组件内, 默认会使用数组里对象的label属性的值, 作为每行节点内容渲染
+        但是我们permissionList里对象name才是名字, 所以用props配合label, 告诉
+        tree组件内, 使用对象的name属性的值, 作为每行节点渲染内容 -->
+    <el-tree :data="permissionList" :props="{label:'name'}" />
 
     <el-row class="footer" type="flex" justify="center">
       <el-col :span="6">
@@ -15,6 +19,7 @@
 export default {
   name: 'AssignPermission',
   props: {
+    // 所有权限点数据(树形结构)
     permissionList: {
       type: Array,
       default: _ => []

@@ -142,7 +142,10 @@
           运行时会转换成以下写法
           :value="dialogVisible"
           @input="val => dialogVisible = val" -->
-        <AssignPermission v-model="dialogVisible" />
+        <AssignPermission
+          v-model="dialogVisible"
+          :permission-list="permissionList"
+        />
       </el-dialog>
     </div>
   </div>
@@ -156,8 +159,10 @@ import { getRoleListAPI,
   getRoleDetailAPI,
   updateRoleAPI,
   deleteRoleAPI } from '@/api/setting'
+import { getPermissionListAPI } from '@/api/permission'
 // import { mapGetters } from 'vuex'
 import AssignPermission from './assignPermission.vue'
+import { transTree } from '@/utils'
 
 export default {
   components: {
@@ -195,17 +200,25 @@ export default {
         ]
       },
       isEdit: false, // 是否处于编辑状态
-      dialogVisible: false // 显示/隐藏->分配权限的弹框
+      dialogVisible: false, // 显示/隐藏->分配权限的弹框
+      permissionList: [] // 所有权限点数据
     }
   },
   computed: {
     // ...mapGetters(['companyId'])
   },
   created() {
+    // 获取所有角色列表
     this.getRoleListFn()
     // this.getCompanyDetailFn()
+    // 获取所有权限点列表
+    this.getPermissionListFn()
   },
   methods: {
+    async getPermissionListFn() {
+      const res = await getPermissionListAPI()
+      this.permissionList = transTree(res.data, '0')
+    },
     // 获取->角色所有列表
     async getRoleListFn() {
       const res = await getRoleListAPI(this.query)
