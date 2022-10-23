@@ -137,6 +137,7 @@
         :close-on-click-modal="false"
         :close-on-press-escape="false"
         :show-close="false"
+        @close="perDialogCloseFn"
       >
         <!-- v-model也是语法糖
           运行时会转换成以下写法
@@ -250,8 +251,8 @@ export default {
     // 设置角色
     // roleObj 角色对象
     async setRoles(roleObj) {
-      const res = await getRoleDetailAPI(roleObj.id)
       this.dialogVisible = true
+      const res = await getRoleDetailAPI(roleObj.id)
       this.permIds = res.data.permIds
     },
 
@@ -321,6 +322,10 @@ export default {
     closeRoleDialogFn() {
       this.$refs.roleForm.resetFields()
       this.showDialog = false
+    },
+    // 分配权限点->弹窗关闭事件方法
+    perDialogCloseFn() {
+      this.permIds = []
     }
   }
 }
