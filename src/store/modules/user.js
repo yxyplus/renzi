@@ -1,5 +1,6 @@
 import { loginAPI, getUserProfileAPI, getUserPhotoAPI } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
@@ -69,6 +70,8 @@ const actions = {
   logoutActions({ commit }) {
     commit('REMOVE_TOKEN')
     commit('REMOVE_USER')
+
+    resetRouter() // 让内存里router对象, 重置
   }
 }
 

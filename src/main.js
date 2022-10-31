@@ -15,6 +15,8 @@ import router from './router'
 import '@/icons'
 import '@/permission'
 import GlobalComponents from '@/components'
+// 注册全局指令
+import powerObj from '@/directive/power'
 
 // if (process.env.NODE_ENV === 'production') {
 //   const { mockXHR } = require('../mock')
@@ -27,6 +29,9 @@ import GlobalComponents from '@/components'
 Vue.use(ElementUI)
 
 Vue.use(GlobalComponents)
+
+// 第一个是: 指令名, 第二个是: 指令对象
+Vue.directive('power', powerObj)
 
 Vue.config.productionTip = false
 
