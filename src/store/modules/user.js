@@ -61,6 +61,9 @@ const actions = {
     const { data: photoObj } = await getUserPhotoAPI(userObj.userId)
     const newObj = { ...userObj, ...photoObj } // 合并一个信息非常全的对象
     commit('SER_USER', newObj)
+
+    // 返回页面权限点英文字符串数组['employees', ...]
+    return userObj.roles.menus
   },
   // 封装-退出登录逻辑 (被动退出token过期 / 主动退出)
   logoutActions({ commit }) {

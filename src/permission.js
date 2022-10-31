@@ -1,4 +1,4 @@
-import router from './router'
+import router, { asyncRoutes } from './router'
 import NProgress from 'nprogress' // 导入进度条插件
 import 'nprogress/nprogress.css' // 导入进度条样式
 import store from '@/store'
@@ -21,7 +21,28 @@ router.beforeEach(async(to, from, next) => {
     } else { // 去别的页面
       next()
       if (!store.getters.name) {
-        store.dispatch('user/getUserInfoActions')
+        const menus = await store.dispatch('user/getUserInfoActions')
+
+        // 用menus权限点英文字符串, 和路由规则对象name匹配
+        /* 把所有准备好的8个路由规则对象取出, 看看名字和menus里是否匹配, 匹配就证明:
+        此登录的用户有这个页面的访问权限, 让filter收集此路由规则对象到新数组里*/
+        const filterList = asyncRoutes.filter(routeObj => {
+          const routeName = routeObj.children[0].name.toLowerCase()
+          return menus.includes(routeName)
+        })
+
+        filterList.push({ path: '*', redirect: '/404', hidden: true })
+
+        // 始终都动态先添加8个路由规则对象
+        router.addRoutes(filterList)
+        store.commit('permission/setRoutes', filterList)
+
+        // 路由再跳转一次, 因为上面next() 会导致白屏(因为放行时, 动态路由还没有加入到内存中路由表里)
+        // 添加完, 立刻在跳转一次
+        next({
+          path: to.path,
+          replace: true // 不让回退, 类似于this.$router.replace
+        })
       }
     }
   } else { // 没有登陆
